@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생성형AI 스타일프롬프트 100 - Midjourney Prompt Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Montserrat:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        serifKr: ['Noto Serif KR', 'serif'],
+                    },
+                    colors: {
+                        sandBg: '#F5F2EB',
+                        museumGold: '#B89E6C',
+                        museumDark: '#242220',
+                        museumGray: '#8C857B',
+                        cardBorder: '#D1C9BC'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #121110;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        /* 스크롤바 미학 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1c1a19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #B89E6C;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4c5b3;
+        }
+       /* 슬라이드 프레임 비율 고정 (모바일에서는 해제) */
+        .slide-aspect-box {
+            aspect-ratio: 16 / 9;
+        }
+        @media (max-width: 1024px) {
+            .slide-aspect-box {
+                aspect-ratio: auto;
+                min-height: 80vh;
+            }
+            #slide-content {
+                overflow-y: auto;
+            }
+        }
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="font-montserrat text-museumDark min-h-screen flex flex-col justify-between">
+
+    <header class="bg-[#1c1a19] border-b border-[#2d2a27] px-6 py-4 flex items-center justify-between z-10">
+        <div class="flex items-center gap-3">
+            <span class="text-museumGold font-serifKr text-xl font-bold tracking-wider">생성형AI 스타일프롬프트 100</span>
+            <div class="hidden md:flex items-center gap-2 px-3 py-1 bg-[#2d2a27] rounded text-xs text-museumGray">
+                <span class="font-bold text-museumGold">공통 지침:</span> Lone figure in landscape | --ar 16:9
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="relative hidden sm:block">
+                <input type="text" id="search-input" placeholder="스타일 검색..." class="bg-[#2d2a27] border border-[#3e3a36] rounded-full px-4 py-1.5 text-xs text-white focus:outline-none focus:border-museumGold w-48 transition-all">
+                <i class="fa-solid fa-magnifying-glass absolute right-3 top-2.5 text-museumGray text-xs"></i>
+            </div>
+            <button id="sidebar-toggle-btn" class="bg-[#2d2a27] hover:bg-[#3e3a36] text-museumGold rounded px-3 py-1.5 text-xs font-semibold flex items-center gap-2 transition-colors">
+                <i class="fa-solid fa-list-ul"></i> 전체 리스트
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 md:p-8 relative">
+        
+        <!-- 전체 탐색용 사이드바 드로어 -->
+        <div id="slide-sidebar" class="fixed right-0 top-0 h-full w-80 bg-[#1c1a19] border-l border-[#2d2a27] shadow-2xl translate-x-full transition-transform duration-300 z-30 flex flex-col">
+            <div class="p-4 border-b border-[#2d2a27] flex items-center justify-between">
+                <h3 class="text-white font-serifKr font-bold text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-museumGold"></i> 화풍 인덱스 (100종)
+                </h3>
+                <button id="sidebar-close-btn" class="text-museumGray hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <!-- 실시간 화풍 링크 리스트 -->
+            <div id="sidebar-list" class="flex-grow overflow-y-auto p-2 space-y-1 text-xs">
+                <!-- JS에서 동적 로드 -->
+            </div>
+        </div>
+
+        <!-- 슬라이드 디스플레이 프레임 (동적 뷰포트 맞춤 비율 유지) -->
+        <div class="w-full max-w-6xl mx-auto shadow-[0_25px_60px_rgba(0,0,0,0.8)] rounded-xl overflow-hidden border border-[#2d2a27] bg-[#FAF8F5] slide-aspect-box flex flex-col justify-between relative">
+            
+            <!-- 슬라이드 바디 영역 -->
+            <div id="slide-content" class="w-full h-full p-6 md:p-8 flex flex-col justify-between relative overflow-hidden">
+                <!-- JS에서 슬라이드 내용 렌더링 -->
+            </div>
+
+            <div id="toast-message" class="absolute bottom-16 right-8 bg-[#121110] text-museumGold border border-[#3e3a36] px-4 py-2.5 rounded-lg shadow-xl text-xs flex items-center gap-2 translate-y-10 opacity-0 pointer-events-none transition-all duration-300">
+                <i class="fa-solid fa-circle-check text-green-500"></i>
+                <span id="toast-text">프롬프트가 클립보드에 복사되었습니다!</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-[#1c1a19] border-t border-[#2d2a27] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 z-10 text-xs">
+        <div class="flex items-center gap-4 text-museumGray">
+            <button id="prev-btn" class="bg-[#2d2a27] hover:bg-[#3e3a36] text-white p-2.5 rounded-lg transition-colors">
+                <i class="fa-solid fa-chevron-left text-sm"></i>
+            </button>
+            <span class="font-cinzel text-white text-sm" id="slide-counter">01 / 22</span>
+            <button id="next-btn" class="bg-[#2d2a27] hover:bg-[#3e3a36] text-white p-2.5 rounded-lg transition-colors">
+                <i class="fa-solid fa-chevron-right text-sm"></i>
+            </button>
+            <!-- 오토슬라이드 재생 버튼 -->
+            <button id="autoplay-btn" class="bg-[#2d2a27] hover:bg-[#3e3a36] text-museumGold px-3 py-2 rounded-lg flex items-center gap-1.5 transition-colors">
+                <i class="fa-solid fa-play"></i> 자동 재생
+            </button>
+        </div>
+        <div class="text-museumGray text-center sm:text-right">
+            <span>한국기독AI작가협회 대표강사 노주나 | AI화풍_프롬프트100.docx 수록</span>
+        </div>
+    </footer>
+
+    <script>
+        const stylesData = [
+            // A. 실사 영화 & 시네마틱 (01-15)
+            { id: "A01", nameKo: "헐리우드 블록버스터", nameEn: "Hollywood Blockbuster", cat: "Film & Cinematic", prompt: "a solitary warrior standing before a colossal alien world, Hollywood sci-fi blockbuster movie still frame, epic cinematic scale, dramatic volumetric god rays, deep shadow contrast, photorealistic, IMAX quality, widescreen composition --ar 16:9" },
+            { id: "A02", nameKo: "느와르 영화", nameEn: "Film Noir", cat: "Film & Cinematic", prompt: "a lone figure in a rain-soaked dark alley, 1940s black and white film noir, single harsh streetlight casting long shadows, mysterious silhouette, high contrast chiaroscuro, wet cobblestones reflections --ar 16:9" },
+            { id: "A03", nameKo: "사이버펑크", nameEn: "Cyberpunk", cat: "Film & Cinematic", prompt: "a solitary figure standing in a dystopian futuristic megacity, cyberpunk aesthetic, neon signs reflecting on rain-drenched streets, purple and teal atmospheric glow, dense urban skyline, Blade Runner mood --ar 16:9" },
+            { id: "A04", nameKo: "웨스턴 스파게티", nameEn: "Spaghetti Western", cat: "Film & Cinematic", prompt: "a lone gunslinger in a vast harsh desert landscape, spaghetti western cinematic style, extreme high contrast lighting, brutal midday sun, long shadows, dust and heat haze, Sergio Leone wide composition --ar 16:9" },
+            { id: "A05", nameKo: "컬트 공포 영화", nameEn: "Cult Horror Film", cat: "Film & Cinematic", prompt: "a lone figure standing in a fog-shrouded desolate landscape, 1980s VHS cult horror film aesthetic, heavy scan lines, color bleeding, film grain distortion, lo-fi degraded quality, unsettling eerie atmosphere --ar 16:9" },
+            
+            { id: "A06", nameKo: "마이클 만 스타일", nameEn: "Michael Mann Style", cat: "Film & Cinematic", prompt: "a solitary figure on a night city expressway, Michael Mann Heat cinematography style, neon lights bleeding into blue-black darkness, strong orange and blue color contrast, atmospheric urban noir, digital cinema look --ar 16:9" },
+            { id: "A07", nameKo: "스탠리 큐브릭 스타일", nameEn: "Stanley Kubrick Style", cat: "Film & Cinematic", prompt: "a lone figure at the vanishing point of a perfectly symmetrical endless corridor, Stanley Kubrick one-point perspective composition, clinical geometric precision, oppressive architectural space, cold unsettling lighting --ar 16:9" },
+            { id: "A08", nameKo: "도그마 95", nameEn: "Dogme 95", cat: "Film & Cinematic", prompt: "a person alone in a raw natural outdoor landscape, Dogme 95 film movement style, natural available light only, handheld documentary realism, unforced authentic composition, gritty honest texture --ar 16:9" },
+            { id: "A09", nameKo: "홍콩 액션 영화", nameEn: "Hong Kong Action Film", cat: "Film & Cinematic", prompt: "a lone martial artist in a dark humid Hong Kong back alley, Wong Kar-wai cinematography style, intense primary color neon lighting, motion blur traces, steam and rain atmosphere, moody atmospheric bokeh --ar 16:9" },
+            { id: "A10", nameKo: "스팀펑크 시네마", nameEn: "Steampunk Cinema", cat: "Film & Cinematic", prompt: "a solitary inventor standing before a massive Victorian steam-powered machine, steampunk aesthetic, sepia and amber tones, intricate brass and copper gear details, industrial gothic atmosphere --ar 16:9" },
+            
+            { id: "A11", nameKo: "필름 그레인", nameEn: "Film Grain", cat: "Film & Cinematic", prompt: "a solitary figure in a dramatic wide landscape, heavy 35mm analog film grain, vintage Kodachrome color palette, bleached highlights, organic photochemical texture, cinematic authenticity --ar 16:9" },
+            { id: "A12", nameKo: "핸드헬드 다큐멘터리", nameEn: "Handheld Documentary", cat: "Film & Cinematic", prompt: "a lone person pausing in a raw authentic outdoor environment, verité documentary photography, natural unforced ambient light, unstaged composition, realistic human presence, raw emotional truth --ar 16:9" },
+            { id: "A13", nameKo: "네오-느와르", nameEn: "Neo-Noir", cat: "Film & Cinematic", prompt: "a solitary detective standing in a modern rain-soaked urban night, neo-noir contemporary cinematography, hard-boiled atmosphere, city shadows and neon reflections, morally ambiguous mood --ar 16:9" },
+            { id: "A14", nameKo: "고딕 호러", nameEn: "Gothic Horror", cat: "Film & Cinematic", prompt: "a lone figure silhouetted before a fog-covered Gothic castle, candlelight and mist, gothic horror atmosphere, sinister storm sky, Victorian supernatural mood, dramatic chiaroscuro --ar 16:9" },
+            { id: "A15", nameKo: "하이 판타지 시네마", nameEn: "High Fantasy Cinema", cat: "Film & Cinematic", prompt: "a solitary hero standing at the edge of an ancient epic fantasy landscape, high fantasy film cinematography, towering mountain peaks, golden hour natural light, elaborate medieval costume, Lord of the Rings epic scale --ar 16:9" },
+
+            // B. 애니메이션 & 일러스트 (01-25)
+            { id: "B01", nameKo: "디즈니/픽사 3D", nameEn: "Disney/Pixar 3D", cat: "Animation & Illustration", prompt: "a lone animated character standing before a sweeping colorful landscape, Pixar 3D animation style, warm subsurface scattering, rounded expressive design, rich saturated colors, cinematic animation lighting --ar 16:9" },
+            { id: "B02", nameKo: "지브리 스튜디오", nameEn: "Studio Ghibli", cat: "Animation & Illustration", prompt: "a solitary young person in a vast green countryside, Studio Ghibli 2D animation style, hand-painted cel animation, soft watercolor clouds, lush pastoral beauty, Hayao Miyazaki aesthetic --ar 16:9" },
+            { id: "B03", nameKo: "레고 블록", nameEn: "LEGO Style", cat: "Animation & Illustration", prompt: "a lone LEGO minifigure standing in an entire world built from LEGO bricks, The LEGO Movie cinematic style, colorful plastic brick textures, playful scale, everything is awesome aesthetic --ar 16:9" },
+            { id: "B04", nameKo: "아르 데코 일러스트", nameEn: "Art Deco Illustration", cat: "Animation & Illustration", prompt: "a solitary elegant figure in an Art Deco poster illustration, geometric symmetrical composition, gold and black palette, stylized architectural forms, 1920s Gatsby luxury atmosphere --ar 16:9" },
+            { id: "B05", nameKo: "프랑스 밴드 데시네", nameEn: "Franco-Belgian BD Comics", cat: "Animation & Illustration", prompt: "a lone adventurer in a Franco-Belgian bande dessinée comic style, clear ligne claire illustration, bold outlines, flat primary colors, European graphic novel aesthetic, Tintin Moebius influence --ar 16:9" },
+            
+            { id: "B06", nameKo: "만화 펜화", nameEn: "Manga Pen Drawing", cat: "Animation & Illustration", prompt: "a solitary manga hero against a dramatic backdrop, Japanese manga pen illustration, intense speed lines and screen tone, stark black and white high contrast, dynamic perspective, Katsuhiro Otomo style --ar 16:9" },
+            { id: "B07", nameKo: "재패니메이션 2D 셀", nameEn: "Japanese 2D Cel Animation", cat: "Animation & Illustration", prompt: "a lone anime character in a dramatic landscape, classic Japanese cel animation style, dynamic cinematic angle, bright highlights on hair, expressive large eyes, GAINAX Evangelion atmosphere --ar 16:9" },
+            { id: "B08", nameKo: "폴리곤 아트", nameEn: "Low-Poly Art", cat: "Animation & Illustration", prompt: "a solitary figure in a low-poly angular landscape, polygon art style, geometric faceted forms, simplified flat-shaded color palette, early PlayStation 3D game aesthetic --ar 16:9" },
+            { id: "B09", nameKo: "에릭 칼 스타일", nameEn: "Eric Carle Style", cat: "Animation & Illustration", prompt: "a lone figure in a colorful collage landscape, Eric Carle picture book illustration style, hand-painted tissue paper collage textures, vibrant bold colors, childlike joyful simplicity --ar 16:9" },
+            { id: "B10", nameKo: "모션 그래픽스", nameEn: "Motion Graphics", cat: "Animation & Illustration", prompt: "a solitary character in a flat design motion graphics world, simplified geometric shapes, bold flat color palette, dynamic graphic layout, Behance digital design aesthetic --ar 16:9" },
+            
+            { id: "B11", nameKo: "팀 버튼 스타일", nameEn: "Tim Burton Style", cat: "Animation & Illustration", prompt: "a lone spindly eccentric figure in a gothic quirky landscape, Tim Burton animation style, elongated proportions, twisted dark palette, whimsically macabre atmosphere, stop-motion texture --ar 16:9" },
+            { id: "B12", nameKo: "피터 래빗 스타일", nameEn: "Beatrix Potter Style", cat: "Animation & Illustration", prompt: "a solitary gentle character in a classic English country garden, Beatrix Potter watercolor illustration style, soft naturalistic detail, earthy botanical accuracy, cozy pastoral charm --ar 16:9" },
+            { id: "B13", nameKo: "팝 아트 만화", nameEn: "Pop Art Comics", cat: "Animation & Illustration", prompt: "a lone figure as a bold pop art comic panel, Roy Lichtenstein style, Ben-Day dot halftone pattern, primary colors, thick black outlines, dramatic comic book printing aesthetic --ar 16:9" },
+            { id: "B14", nameKo: "캐리커처", nameEn: "Caricature", cat: "Animation & Illustration", prompt: "a solitary exaggerated caricature figure in a dramatic setting, editorial caricature illustration, over-exaggerated facial features, humorous distortion, bold expressive linework --ar 16:9" },
+            { id: "B15", nameKo: "벡터 일러스트", nameEn: "Vector Illustration", cat: "Animation & Illustration", prompt: "a lone figure in a clean vector illustration landscape, precise bezier curves, flat gradient fills, modern graphic design aesthetic, Adobe Illustrator professional quality --ar 16:9" },
+            
+            { id: "B16", nameKo: "목판화/리노컷", nameEn: "Woodblock/Linocut Print", cat: "Animation & Illustration", prompt: "a solitary figure in a bold woodblock print landscape, linocut printmaking style, rough hand-carved texture, stark black ink on white, gestural carved lines, bold graphic contrast --ar 16:9" },
+            { id: "B17", nameKo: "픽셀 아트", nameEn: "Pixel Art", cat: "Animation & Illustration", prompt: "a lone pixel character in a retro 16-bit landscape, pixel art game style, dithered colors, low-resolution digital charm, SNES Super Nintendo era aesthetic, 8-bit nostalgia --ar 16:9" },
+            { id: "B18", nameKo: "미니멀리즘 일러스트", nameEn: "Minimalist Illustration", cat: "Animation & Illustration", prompt: "a solitary minimalist figure in a vast negative space, minimal illustration style, single accent color on white, extreme simplicity, white space as design element, Swiss graphic design --ar 16:9" },
+            { id: "B19", nameKo: "라인 아트", nameEn: "Line Art", cat: "Animation & Illustration", prompt: "a lone figure drawn in pure delicate line art, fine pen drawing style, single weight ink lines only, no fill or shading, intricate linework detail, white background --ar 16:9" },
+            { id: "B20", nameKo: "실루엣 아트", nameEn: "Silhouette Art", cat: "Animation & Illustration", prompt: "a solitary figure as a pure dramatic silhouette against a vivid sunset sky, black silhouette art, high contrast backlight, flat graphic forms, golden amber atmospheric glow --ar 16:9" },
+            
+            { id: "B21", nameKo: "로토스코핑", nameEn: "Rotoscoping", cat: "Animation & Illustration", prompt: "a lone figure with a rotoscoped animated overlay traced over live action, smooth flowing movement, semi-realistic animated style, between photography and illustration, A-ha Take On Me aesthetic --ar 16:9" },
+            { id: "B22", nameKo: "스테인드글라스", nameEn: "Stained Glass", cat: "Animation & Illustration", prompt: "a solitary figure in a Gothic cathedral stained glass window illustration, heavy black lead outlines, transparent luminous colored glass segments, divine light composition --ar 16:9" },
+            { id: "B23", nameKo: "스티커 아트", nameEn: "Sticker Art", cat: "Animation & Illustration", prompt: "a lone figure as a cute kawaii sticker design, thick white outline border, simplified bold forms, glossy finish texture, die-cut sticker sheet aesthetic, charming adorable style --ar 16:9" },
+            { id: "B24", nameKo: "패션 일러스트", nameEn: "Fashion Illustration", cat: "Animation & Illustration", prompt: "a solitary fashion figure in a dramatic runway pose, high fashion illustration style, elegant proportions, loose gestural brushwork, Vogue editorial aesthetic, haute couture mood --ar 16:9" },
+            { id: "B25", nameKo: "클레이 애니메이션", nameEn: "Claymation Stop-Motion", cat: "Animation & Illustration", prompt: "a lone clay figure in a handmade stop-motion world, claymation animation style, visible clay fingerprint texture, warm studio lighting, Aardman Wallace and Gromit charming handmade roughness --ar 16:9" },
+
+            // C. 순수 미술 & 디자인 (01-25)
+            { id: "C01", nameKo: "수채화", nameEn: "Watercolor", cat: "Fine Art & Design", prompt: "a solitary figure in a loose watercolor landscape, transparent flowing washes, soft bleeding edges, luminous white paper showing through, serene lyrical mood, en plein air freshness --ar 16:9" },
+            { id: "C02", nameKo: "유화 임파스토", nameEn: "Oil Painting Impasto", cat: "Fine Art & Design", prompt: "a lone figure in a Van Gogh impasto oil painting, thick swirling paint strokes, intense saturated color, visible palette knife texture, post-impressionist emotional turbulence --ar 16:9" },
+            { id: "C03", nameKo: "아이소메트릭", nameEn: "Isometric Art", cat: "Fine Art & Design", prompt: "a lone figure in a miniature isometric city, 3D isometric vector art, diagonal top-down view, precise geometric architecture, pastel color palette, cute detailed diorama --ar 16:9" },
+            { id: "C04", nameKo: "초현실주의", nameEn: "Surrealism", cat: "Fine Art & Design", prompt: "a solitary figure in a dreamlike impossible surreal landscape, Salvador Dali surrealism, melting clocks and reality, unexpected object combinations, precise hyperrealistic rendering of impossible scenes --ar 16:9" },
+            { id: "C05", nameKo: "인상주의", nameEn: "Impressionism", cat: "Fine Art & Design", prompt: "a lone figure in a sun-dappled French garden, Impressionism painting style, loose spontaneous broken brushwork, captured fleeting light and color, Claude Monet atmospheric shimmer --ar 16:9" },
+            
+            { id: "C06", nameKo: "표현주의", nameEn: "Expressionism", cat: "Fine Art & Design", prompt: "a solitary anguished figure in a distorted landscape, German Expressionism painting style, warped tortured forms, intense psychological color, Egon Schiele raw emotional distortion --ar 16:9" },
+            { id: "C07", nameKo: "큐비즘", nameEn: "Cubism", cat: "Fine Art & Design", prompt: "a lone figure deconstructed into geometric planes, Cubist painting style, multiple simultaneous viewpoints, fragmented angular forms, Pablo Picasso analytical cubism aesthetic --ar 16:9" },
+            { id: "C08", nameKo: "포비즘", nameEn: "Fauvism", cat: "Fine Art & Design", prompt: "a solitary figure in a Fauvist color explosion landscape, wild non-naturalistic colors, Henri Matisse joyful color liberation, bold spontaneous brushstrokes, pure emotion through color --ar 16:9" },
+            { id: "C09", nameKo: "미니멀 아트", nameEn: "Minimal Art", cat: "Fine Art & Design", prompt: "a lone figure as minimal geometric form, hard-edge minimalist fine art, flat pure color fields, Donald Judd precision, industrial gallery aesthetic, extreme visual reduction --ar 16:9" },
+            { id: "C10", nameKo: "바로크", nameEn: "Baroque", cat: "Fine Art & Design", prompt: "a solitary figure in dramatic Baroque painting, Caravaggio chiaroscuro lighting, rich golden tones, theatrical divine illumination, sumptuous fabric textures, Catholic Counter-Reformation grandeur --ar 16:9" },
+            
+            { id: "C11", nameKo: "로코코", nameEn: "Rococo", cat: "Fine Art & Design", prompt: "a lone elegant figure in Rococo painting style, pastel shell-pink palette, delicate ornamental curves, Fragonard playful aristocratic charm, soft feathery brushwork --ar 16:9" },
+            { id: "C12", nameKo: "아방가르드", nameEn: "Avant-Garde", cat: "Fine Art & Design", prompt: "a solitary figure in an avant-garde experimental composition, anti-traditional rule-breaking aesthetics, conceptual contemporary art, provocative visual language, museum gallery installation feel --ar 16:9" },
+            { id: "C13", nameKo: "디지털 페인팅", nameEn: "Digital Painting", cat: "Fine Art & Design", prompt: "a lone figure in a cinematic digital painting, photorealistic digital art, blended oil paint techniques, hyper-detailed textures, professional concept art quality, ArtStation masterwork --ar 16:9" },
+            { id: "C14", nameKo: "매트 페인팅", nameEn: "Matte Painting", cat: "Fine Art & Design", prompt: "a solitary figure before an epic film matte painting landscape, Hollywood matte painting tradition, hyperrealistic fantasy environment, seamless photo-paint integration, ILM visual effects quality --ar 16:9" },
+            { id: "C15", nameKo: "젠탱글/두들 아트", nameEn: "Zentangle/Doodle Art", cat: "Fine Art & Design", prompt: "a lone figure surrounded by intricate zentangle pattern world, detailed doodle art illustration, complex repetitive organic patterns, black ink meditative drawing, hand-drawn obsessive detail --ar 16:9" },
+            
+            { id: "C16", nameKo: "스크래치보드", nameEn: "Scratchboard", cat: "Fine Art & Design", prompt: "a solitary figure in scratchboard art, white lines scratched from black clay surface, stark high contrast, crosshatch and fine line texture, dramatic engraving aesthetic --ar 16:9" },
+            { id: "C17", nameKo: "테셀레이션", nameEn: "Tessellation", cat: "Fine Art & Design", prompt: "a lone figure surrounded by seamless MC Escher tessellation pattern, interlocking shapes perfectly filling the plane, mathematical art beauty, figure-ground ambiguity --ar 16:9" },
+            { id: "C18", nameKo: "모자이크", nameEn: "Mosaic", cat: "Fine Art & Design", prompt: "a solitary figure as Roman mosaic art, small tesserae tile fragments, ancient fresco color palette, visible grout lines, Byzantine sacred art influence, ancient Mediterranean aesthetic --ar 16:9" },
+            { id: "C19", nameKo: "콜라주/몽타주", nameEn: "Collage/Montage", cat: "Fine Art & Design", prompt: "a lone figure in a Dadaist photomontage collage, cut-and-paste newspaper fragments, layered vintage imagery, visual disruption and tension, Hannah Hoch surreal collage aesthetic --ar 16:9" },
+            { id: "C20", nameKo: "네오-팝 아트", nameEn: "Neo-Pop Art", cat: "Fine Art & Design", prompt: "a solitary figure in neo-pop street art style, Takashi Murakami superflat aesthetic, bold graphic imagery, pop culture references, spray paint on urban wall surface --ar 16:9" },
+            
+            { id: "C21", nameKo: "초크 아트", nameEn: "Chalk Art", cat: "Fine Art & Design", prompt: "a lone figure in soft chalk pastel street art, chalk drawing on dark pavement texture, powdery smudged edges, rich saturated color, 3D trompe loeil street art illusion --ar 16:9" },
+            { id: "C22", nameKo: "펜과 잉크 드로잉", nameEn: "Pen and Ink Drawing", cat: "Fine Art & Design", prompt: "a solitary figure in detailed pen and ink drawing, cross-hatching and stippling techniques, black ink on white paper, old master drawing quality, engraving precision --ar 16:9" },
+            { id: "C23", nameKo: "공학적 스케치", nameEn: "Engineering Sketch", cat: "Fine Art & Design", prompt: "a lone figure rendered as precise architectural engineering blueprint drawing, technical pen lines, drafting compass precision, graph paper background, blueprint blue and white tones --ar 16:9" },
+            { id: "C24", nameKo: "만달라", nameEn: "Mandala", cat: "Fine Art & Design", prompt: "a solitary figure at the center of an elaborate mandala design, symmetrical expanding geometric patterns, sacred geometry, vibrant jewel tones, spiritual meditative composition --ar 16:9" },
+            { id: "C25", nameKo: "추상 표현주의", nameEn: "Abstract Expressionism", cat: "Fine Art & Design", prompt: "a lone figure dissolved into action painting, Jackson Pollock drip technique, gestural paint splatters and poured colors, raw explosive emotion, New York School abstract expressionism --ar 16:9" },
+
+            // D. 사진술 & 특수효과 (01-15)
+            { id: "D01", nameKo: "로우앵글 광각", nameEn: "Low Angle Wide Shot", cat: "Photography & Special Effects", prompt: "a solitary figure shot from extreme low angle with fisheye wide angle distortion, towering overwhelming perspective, dramatically warped horizon, dynamic upward cinematic composition --ar 16:9" },
+            { id: "D02", nameKo: "하이 키 조명", nameEn: "High-Key Lighting", cat: "Photography & Special Effects", prompt: "a lone figure in high-key studio photography, bright overexposed whites, minimal shadow, ethereal purity, soft box lighting, clean clinical fashion photography --ar 16:9" },
+            { id: "D03", nameKo: "로 키 조명", nameEn: "Low-Key Lighting", cat: "Photography & Special Effects", prompt: "a solitary figure in dramatic low-key portrait lighting, single directional light source, deep shadow enveloping the scene, mysterious chiaroscuro, contrasty moody atmosphere --ar 16:9" },
+            { id: "D04", nameKo: "틸트-시프트", nameEn: "Tilt-Shift Miniature", cat: "Photography & Special Effects", prompt: "a lone tiny figure in a tilt-shift miniature world, selective focus blur effect, toy world illusion, bird's eye view, sharp center with blurred edges, miniature photography --ar 16:9" },
+            { id: "D05", nameKo: "매크로 포토그래피", nameEn: "Macro Photography", cat: "Photography & Special Effects", prompt: "a solitary microscopic figure in an extreme macro photography world, ultra close-up detail, shallow depth of field, magnified texture and surface detail, scientific photography aesthetic --ar 16:9" },
+            
+            { id: "D06", nameKo: "아날로그 폴라로이드", nameEn: "Analog Polaroid", cat: "Photography & Special Effects", prompt: "a lone figure in a vintage Polaroid photograph, square format, faded color cast, light leaks and vignetting, instant film texture, nostalgic 1970s amateur photography --ar 16:9" },
+            { id: "D07", nameKo: "다중 노출", nameEn: "Multiple Exposure", cat: "Photography & Special Effects", prompt: "a solitary figure in multiple exposure photography, overlapping transparent ghost images, dreamlike layered reality, forest and portrait merged, experimental analog photography --ar 16:9" },
+            { id: "D08", nameKo: "언더워터 포토", nameEn: "Underwater Photography", cat: "Photography & Special Effects", prompt: "a lone diver figure in deep underwater photography, caustic light rays filtering down, deep blue tonal gradients, weightless movement, marine life surrounding --ar 16:9" },
+            { id: "D09", nameKo: "라이트 페인팅", nameEn: "Light Painting", cat: "Photography & Special Effects", prompt: "a solitary figure surrounded by light painting photography, long exposure light trails, glowing neon light drawings in air, dark background, magical light calligraphy --ar 16:9" },
+            { id: "D10", nameKo: "크로마 키", nameEn: "Chroma Key", cat: "Photography & Special Effects", prompt: "a lone figure with an artificially composited impossible background, green screen chroma key replacement, surreal impossible environment combination, artificial theatrical visual separation --ar 16:9" },
+            
+            { id: "D11", nameKo: "HDR 사진", nameEn: "HDR Photography", cat: "Photography & Special Effects", prompt: "a solitary figure in extreme HDR photography, hyper-detailed tonal range, otherworldly saturated colors, every shadow and highlight simultaneously visible, surreal overprocessed digital look --ar 16:9" },
+            { id: "D12", nameKo: "아웃포커스 보케", nameEn: "Bokeh/Out-of-Focus", cat: "Photography & Special Effects", prompt: "a lone figure in shallow depth bokeh photography, creamy out-of-focus background, circular bokeh light balls, portrait lens compression, dreamy soft atmospheric blur --ar 16:9" },
+            { id: "D13", nameKo: "파노라마 뷰", nameEn: "Panoramic View", cat: "Photography & Special Effects", prompt: "a solitary tiny figure in a vast panoramic landscape photograph, extreme wide panorama, sweeping horizon, human scale dwarfed by infinite nature, geographic epic photography --ar 16:9" },
+            { id: "D14", nameKo: "슬로우 셔터", nameEn: "Slow Shutter", cat: "Photography & Special Effects", prompt: "a lone figure with motion blur streaks, slow shutter speed photography, ghost motion trails, sharp subject against blurred environment, dynamic energy frozen in time --ar 16:9" },
+            { id: "D15", nameKo: "역광 실루엣", nameEn: "Backlit Silhouette", cat: "Photography & Special Effects", prompt: "a solitary figure as a pure silhouette against a blazing backlit sunset, rim lighting photography, golden hour backlight, dramatic warm sky, photographic silhouette art --ar 16:9" },
+
+            // E. 역사적 & 문화적 스타일 (01-20)
+            { id: "E01", nameKo: "르네상스 회화", nameEn: "Renaissance Painting", cat: "Historical & Cultural", prompt: "a lone figure in a Renaissance painting, Leonardo da Vinci sfumato technique, classical humanist proportions, soft luminous atmospheric perspective, Italian High Renaissance masterwork --ar 16:9" },
+            { id: "E02", nameKo: "이집트 벽화", nameEn: "Egyptian Wall Painting", cat: "Historical & Cultural", prompt: "a solitary figure in ancient Egyptian hieroglyphic wall painting, profile body with frontal eye, flat hierarchical perspective, ochre and lapis lazuli palette, pharaonic symbolic composition --ar 16:9" },
+            { id: "E03", nameKo: "일본 우키요에", nameEn: "Japanese Ukiyo-e", cat: "Historical & Cultural", prompt: "a lone figure in a Japanese ukiyo-e woodblock print, bold flat outlines, Hokusai compositional drama, decorative patterned textiles, floating world aesthetic --ar 16:9" },
+            { id: "E04", nameKo: "중국 수묵 채색화", nameEn: "Chinese Ink Wash Painting", cat: "Historical & Cultural", prompt: "a solitary scholar figure in a Chinese ink wash painting, expressive brushwork, empty void space as heaven, mountain mist landscape, Song Dynasty literati aesthetic --ar 16:9" },
+            { id: "E05", nameKo: "아즈텍/마야 양식", nameEn: "Aztec/Mayan Style", cat: "Historical & Cultural", prompt: "a lone figure in Aztec codex illustration style, geometric symbolic patterns, feathered headdress deity forms, turquoise and terracotta palette, pre-Columbian sacred art --ar 16:9" },
+            
+            { id: "E06", nameKo: "켈트족 문양", nameEn: "Celtic Knotwork", cat: "Historical & Cultural", prompt: "a solitary figure woven into Celtic knotwork patterns, interlaced endless knot border designs, illuminated manuscript style, Book of Kells aesthetic, intertwined animal forms --ar 16:9" },
+            { id: "E07", nameKo: "아르 누보", nameEn: "Art Nouveau", cat: "Historical & Cultural", prompt: "a lone figure in Art Nouveau decorative style, organic flowing plant vine curves, Alphonse Mucha poster design, ornate floral border, sinuous feminine elegance --ar 16:9" },
+            { id: "E08", nameKo: "19세기 신비주의", nameEn: "19th Century Mysticism", cat: "Historical & Cultural", prompt: "a solitary figure in 19th century Symbolist painting, Pre-Raphaelite mystical beauty, fantastical otherworldly mood, John William Waterhouse dreamlike mythology, romantic dark enchantment --ar 16:9" },
+            { id: "E09", nameKo: "소련 구성주의", nameEn: "Soviet Constructivism", cat: "Historical & Cultural", prompt: "a lone heroic figure in Soviet Constructivist propaganda poster, bold red and black geometric forms, Alexander Rodchenko dynamic diagonal composition, industrial revolutionary aesthetic --ar 16:9" },
+            { id: "E10", nameKo: "팝 아르테", nameEn: "Latin American Pop Arte", cat: "Historical & Cultural", prompt: "a solitary figure in Latin American Pop Arte style, vibrant street graffiti colors, social commentary imagery, bold urban mural aesthetic, tropical palette energy --ar 16:9" },
+            
+            { id: "E11", nameKo: "타로 카드 일러스트", nameEn: "Tarot Card Illustration", cat: "Historical & Cultural", prompt: "a lone arcana figure on a Tarot card illustration, medieval esoteric symbolism, Rider-Waite Tarot art style, mystical symbolic objects, celestial border decorations --ar 16:9" },
+            { id: "E12", nameKo: "고대 그리스 조각", nameEn: "Ancient Greek Sculpture", cat: "Historical & Cultural", prompt: "a solitary Hellenistic marble statue figure, ancient Greek idealized human form, perfect anatomical proportions, white marble carved texture, classical Greek temple setting --ar 16:9" },
+            { id: "E13", nameKo: "중세 채색 필사본", nameEn: "Medieval Illuminated Manuscript", cat: "Historical & Cultural", prompt: "a lone figure in a medieval illuminated manuscript, gold leaf gilded decorations, intricate marginalia borders, flat hieratic figures, Book of Hours devotional art --ar 16:9" },
+            { id: "E14", nameKo: "만화경 패턴", nameEn: "Kaleidoscope Pattern", cat: "Historical & Cultural", prompt: "a solitary figure at the center of a kaleidoscope mandala, perfect radial symmetry, jewel-toned geometric reflections, psychedelic color explosion, optical illusion beauty --ar 16:9" },
+            { id: "E15", nameKo: "옵 아트", nameEn: "Op Art", cat: "Historical & Cultural", prompt: "a lone figure embedded in Op Art visual illusion, Victor Vasarely geometric optical pattern, black and white vibrating stripes, perceptual motion illusion, retinal kinetic art --ar 16:9" },
+            
+            { id: "E16", nameKo: "프레스코 벽화", nameEn: "Fresco Wall Painting", cat: "Historical & Cultural", prompt: "a solitary figure in ancient fresco wall painting, Renaissance plaster pigment technique, faded earthy mineral colors, Pompeii Roman villa aesthetic, weathered ancient wall texture --ar 16:9" },
+            { id: "E17", nameKo: "한국 민화", nameEn: "Korean Minhwa Folk Art", cat: "Historical & Cultural", prompt: "a lone figure in Korean Minhwa folk painting style, charming naïve perspective, bold primary colors, symbolic animals and plants, Joseon dynasty folk art humor --ar 16:9" },
+            { id: "E18", nameKo: "아프리카 마스크 아트", nameEn: "African Mask Art", cat: "Historical & Cultural", prompt: "a solitary figure inspired by African ceremonial mask art, geometric tribal patterns, bold simplified forms, carved wood texture, Sub-Saharan sacred ritual aesthetic --ar 16:9" },
+            { id: "E19", nameKo: "초크보드 스타일", nameEn: "Chalkboard Style", cat: "Historical & Cultural", prompt: "a lone figure drawn on a chalkboard with chalk, white and colored chalk on dark green board, hand-drawn casual style, school classroom aesthetic, chalky powdery texture --ar 16:9" },
+            { id: "E20", nameKo: "메탈릭 스팀펑크", nameEn: "Metallic Steampunk", cat: "Historical & Cultural", prompt: "a solitary inventor figure in a steampunk world of metallic gears and mechanisms, brass and copper mechanical details, Victorian industrial fantasy, exposed clockwork machinery, sepia and gold tones --ar 16:9" }
+        ];
+
+        const categoryImages = {
+            "Cover": "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=800",
+            "Film & Cinematic": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800",
+            "Animation & Illustration": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=800",
+            "Fine Art & Design": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=800",
+            "Photography & Special Effects": "https://images.unsplash.com/photo-1554080353-a576cf803bda?q=80&w=800",
+            "Historical & Cultural": "https://images.unsplash.com/photo-1580136579312-94651dfd596d?q=80&w=800",
+            "Guide": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=800"
+        };
+
+        // UI 상태 관리 변수
+    let currentSlideIndex = 0;
+    let isAutoplayActive = false;
+    let autoplayTimer = null;
+
+    // 슬라이드 구조화 (총 20개 슬라이드: 5개씩 20그룹)
+    const slides = [];
+
+    function initSlides() {
+        // 프롬프트 카드 슬라이드 분할 적재 (5개씩 총 20장 구성)
+        const chunkSize = 5;
+        for (let i = 0; i < stylesData.length; i += chunkSize) {
+            const chunk = stylesData.slice(i, i + chunkSize);
+            const category = chunk[0].cat;
+            const indexStart = i + 1;
+            const indexEnd = Math.min(i + chunkSize, stylesData.length);
+            slides.push({
+                type: 'content',
+                category: category,
+                indexRange: `${indexStart.toString().padStart(2, '0')}-${indexEnd.toString().padStart(2, '0')}`,
+                prompts: chunk
+            });
+        }
+    }
+
+    function renderSlide(index) {
+        const slide = slides[index];
+        const contentArea = document.getElementById('slide-content');
+        
+        // 공통 헤더를 제외한 내부 뷰 클리어
+        contentArea.innerHTML = '';
+
+        if (slide.type === 'content') {
+            const promptCardsHtml = slide.prompts.map(p => `
+                <div class="bg-white border-l-4 border-museumGold p-2 rounded shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-1 group relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="font-cinzel font-bold text-xs text-museumGold">${p.id}</span>
+                            <span class="font-serifKr font-extrabold text-xs text-museumDark">${p.nameKo}</span>
+                            <span class="font-montserrat text-[10px] text-museumGray hidden sm:inline">${p.nameEn}</span>
+                        </div>
+                        <button onclick="copyPromptText('${p.id}', \`${p.prompt.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)" class="text-museumGray hover:text-museumGold transition-colors text-xs p-1" title="클립보드로 복사">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="bg-sandBg/50 hover:bg-sandBg border border-cardBorder/30 rounded p-1.5 font-mono text-[10px] text-museumDark/75 select-all truncate transition-colors" title="클릭 시 선택 및 자동 스크롤">
+                        ${p.prompt}
+                    </div>
+                </div>
+            `).join('');
+
+            const defaultImg = categoryImages[slide.category] || categoryImages["Cover"];
+
+            contentArea.innerHTML = `
+                <div class="flex items-center justify-between border-b border-cardBorder/50 pb-3 mb-4">
+                    <h2 class="font-serifKr font-bold text-lg md:text-xl text-museumDark flex items-center gap-2">
+                        <span class="px-2 py-0.5 bg-museumGold text-white text-xs font-cinzel rounded">${slide.category[0]}</span>
+                        ${slide.category}
+                    </h2>
+                    <span class="text-xs text-museumGold font-cinzel font-semibold tracking-widest">${slide.indexRange}</span>
+                </div>
+                <div class="flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
+                    <!-- 좌측: 프롬프트 카드 타일링 -->
+                    <div class="lg:col-span-7 flex flex-col justify-between gap-2.5 min-h-0 overflow-y-auto pr-1">
+                        ${promptCardsHtml}
+                    </div>
+                    <!-- 우측: 미술 전시회 스타일 대표작 카드 쇼케이스 -->
+                    <div class="lg:col-span-5 flex flex-col justify-between bg-sandBg/50 p-4 rounded-xl border border-cardBorder/30 min-h-0">
+                        <div class="relative w-full h-[180px] md:h-[200px] bg-black rounded-lg overflow-hidden border border-cardBorder/60 group shadow-inner">
+                            <img id="showcase-img" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+                                 src="${defaultImg}" 
+                                 onerror="handleImageError(this, '${slide.category}')"
+                                 alt="${slide.category} Visual Example">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+                            <span class="absolute bottom-2 right-2 text-[9px] bg-black/40 text-white/80 px-2 py-0.5 rounded font-cinzel">CURATED</span>
+                        </div>
+                        <div class="mt-3">
+                            <h4 class="font-serifKr font-bold text-xs text-museumDark flex items-center gap-1.5 mb-1.5">
+                                <i class="fa-solid fa-wand-magic-sparkles text-museumGold"></i>
+                                ${slide.category} 화풍 해석
+                            </h4>
+                            <p class="text-[11px] leading-relaxed text-museumDark/70 font-serifKr text-truncate-2">
+                                ${getCategoryDescription(slide.category)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 하단 페이지 카운터 업데이트
+        document.getElementById('slide-counter').textContent = `${(index + 1).toString().padStart(2, '0')} / ${slides.length.toString().padStart(2, '0')}`;
+        updateActiveIndexClass();
+    }
+
+    function getCategoryDescription(cat) {
+            switch(cat) {
+                case "Film & Cinematic":
+                    return "헐리우드 블록버스터급 대단위 광원 처리부터 1940년대 레트로 필름 느와르, 차가운 대칭성을 추구하는 모던 시네마까지 극장에서의 압도적 미장센과 카메라 피사체 압축 비율을 고스란히 담아냅니다.";
+                case "Animation & Illustration":
+                    return "감성 넘치는 수채 파스텔 톤의 지브리 감성, 트렌디한 카툰 망점 일러스트, 팝아트의 굵직한 선조 표현 등 극단적으로 정제된 드로잉 텍스처와 다채로운 벡터 질감을 복합 재현합니다.";
+                case "Fine Art & Design":
+                    return "빈센트 반 고흐의 극적이고 입체적인 유화 임파스토 기법부터 살바도르 달리의 초현실적 물성 왜곡, 추상적 터치로 내면의 깊은 울림을 발산하는 정통 순수 회화의 예술혼을 불어넣습니다.";
+                case "Photography & Special Effects":
+                    return "틸트 시프트 렌즈를 통한 미니어처 환상 유도, 피사체 경계가 녹아내리는 매크로 현미경 구도, 몽환적 야간 라이트 페인팅 등 디지털과 아날로그 하이 테크놀로지가 접목된 시각 혁신을 연출합니다.";
+                case "Historical & Cultural":
+                    return "켈트족 문양, 중세 필사본의 금박 질감, 조선시대 민화와 중국 전통 수묵화의 풍류 등 인류가 수천 년간 축적해 온 유서 깊은 민속 미학과 정통 역사 아카이브 기법을 온전히 고찰합니다.";
+                default:
+                    return "AI화풍의 핵심적인 매개 요소를 바탕으로 미드저니의 잠재된 렌더링 역량을 최대한 끌어올려 기도의 마음으로 승화시킨 걸작 프롬프트 풀셋입니다.";
+            }
+        }
+
+        function handleImageError(imgElement, category) {
+            console.log(`[Image Error] Failed to load original image for category: ${category}. Fallback rendering triggered.`);
+            
+            // 아름다운 시각적 대체 그라데이션 맵
+            const gradientMaps = {
+                "Film & Cinematic": "linear-gradient(135deg, #2c3e50 0%, #000000 100%)",
+                "Animation & Illustration": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)",
+                "Fine Art & Design": "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
+                "Photography & Special Effects": "linear-gradient(135deg, #130cb7 0%, #52e5e7 100%)",
+                "Historical & Cultural": "linear-gradient(135deg, #f9d423 0%, #ff4e50 100%)",
+                "Cover": "linear-gradient(135deg, #f5f2eb 0%, #b89e6c 100%)"
+            };
+
+            const grad = gradientMaps[category] || gradientMaps["Cover"];
+            const parent = imgElement.parentElement;
+            
+            // 이미지를 제거하고 미니멀한 그래픽 박스로 대체
+            parent.innerHTML = `
+                <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center" style="background: ${grad}">
+                    <i class="fa-solid fa-wand-magic-sparkles text-white text-3xl mb-2 drop-shadow-md"></i>
+                    <span class="text-white font-cinzel text-xs font-bold tracking-widest drop-shadow-md">${category.toUpperCase()}</span>
+                </div>
+            `;
+        }
+
+        function copyPromptText(id, text) {
+            // 구식 브라우저 및 iframe 친화적 예외 안전 복사
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = text;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast(`${id} 화풍 프롬프트가 복사되었습니다!`);
+                } else {
+                    showToast("복사에 실패했습니다. 수동으로 복사해 주세요.");
+                }
+            } catch (err) {
+                console.error("Copy operation error:", err);
+                showToast("복사 중 에러가 발생했습니다.");
+            }
+            
+            document.body.removeChild(tempTextArea);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            const toastText = document.getElementById('toast-text');
+            
+            toastText.textContent = message;
+            toast.style.transform = "translateY(0)";
+            toast.style.opacity = "1";
+            toast.style.pointerEvents = "auto";
+
+            setTimeout(() => {
+                toast.style.transform = "translateY(40px)";
+                toast.style.opacity = "0";
+                toast.style.pointerEvents = "none";
+            }, 3000);
+        }
+
+        function setupSidebar() {
+        const sidebarList = document.getElementById('sidebar-list');
+        sidebarList.innerHTML = '';
+
+        slides.forEach((slide, idx) => {
+            let label = `[${slide.category[0]}] ${slide.category} (${slide.indexRange})`;
+            let iconClass = 'fa-solid fa-layer-group';
+
+            sidebarList.innerHTML += `
+                <button onclick="jumpToSlide(${idx})" class="w-full text-left p-2.5 rounded hover:bg-[#2d2a27] text-museumGray hover:text-white transition-all flex items-center gap-3 sidebar-slide-btn" data-index="${idx}">
+                    <i class="${iconClass} text-museumGold"></i>
+                    <span class="truncate">${label}</span>
+                </button>
+            `;
+        });
+
+        // 사이드바 개폐 이벤트 등록
+        document.getElementById('sidebar-toggle-btn').addEventListener('click', () => {
+            document.getElementById('slide-sidebar').classList.toggle('translate-x-full');
+        });
+        document.getElementById('sidebar-close-btn').addEventListener('click', () => {
+            document.getElementById('slide-sidebar').classList.add('translate-x-full');
+        });
+    }
+
+    function jumpToSlide(idx) {
+            currentSlideIndex = idx;
+            renderSlide(currentSlideIndex);
+            // 모바일 배려 사이드바 자동 은닉
+            if (window.innerWidth < 1024) {
+                document.getElementById('slide-sidebar').classList.add('translate-x-full');
+            }
+        }
+
+        function updateActiveIndexClass() {
+            const buttons = document.querySelectorAll('.sidebar-slide-btn');
+            buttons.forEach(btn => {
+                const idx = parseInt(btn.getAttribute('data-index'));
+                if (idx === currentSlideIndex) {
+                    btn.classList.add('bg-[#2d2a27]', 'text-white', 'border-l-2', 'border-museumGold');
+                } else {
+                    btn.classList.remove('bg-[#2d2a27]', 'text-white', 'border-l-2', 'border-museumGold');
+                }
+            });
+        }
+
+        function toggleAutoplay() {
+            const autoplayBtn = document.getElementById('autoplay-btn');
+            
+            if (isAutoplayActive) {
+                clearInterval(autoplayTimer);
+                isAutoplayActive = false;
+                autoplayBtn.innerHTML = `<i class="fa-solid fa-play"></i> 자동 재생`;
+                autoplayBtn.classList.remove('bg-museumGold', 'text-white');
+                autoplayBtn.classList.add('bg-[#2d2a27]', 'text-museumGold');
+            } else {
+                isAutoplayActive = true;
+                autoplayBtn.innerHTML = `<i class="fa-solid fa-pause"></i> 일시 정지`;
+                autoplayBtn.classList.remove('bg-[#2d2a27]', 'text-museumGold');
+                autoplayBtn.classList.add('bg-museumGold', 'text-[#121110]');
+                
+                autoplayTimer = setInterval(() => {
+                    nextSlide();
+                }, 6000); // 6초마다 페이지 전환
+            }
+        }
+
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            renderSlide(currentSlideIndex);
+        }
+
+        function prevSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            renderSlide(currentSlideIndex);
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                const q = e.target.value.toLowerCase().trim();
+                const sidebarList = document.getElementById('sidebar-list');
+                
+                if (q === '') {
+                    setupSidebar();
+                    return;
+                }
+
+                sidebarList.innerHTML = '<div class="text-museumGray p-2">검색 결과:</div>';
+
+                // 스타일 데이터 1차 필터링
+                const filtered = stylesData.filter(s => 
+                    s.nameKo.toLowerCase().includes(q) || 
+                    s.nameEn.toLowerCase().includes(q) || 
+                    s.prompt.toLowerCase().includes(q)
+                );
+
+                if (filtered.length === 0) {
+                    sidebarList.innerHTML += '<div class="text-museumGray p-2 text-center">검색 결과가 없습니다.</div>';
+                    return;
+                }
+
+                filtered.forEach(p => {
+                    // 해당 카드가 속해 있는 슬라이드 인덱스 역탐색
+                    const slideIdx = slides.findIndex(slide => 
+                        slide.type === 'content' && slide.prompts.some(item => item.id === p.id)
+                    );
+
+                    sidebarList.innerHTML += `
+                        <button onclick="jumpToSlide(${slideIdx})" class="w-full text-left p-2 rounded hover:bg-[#2d2a27] text-white transition-all flex flex-col gap-1 border-b border-cardBorder/10">
+                            <div class="flex items-center gap-2">
+                                <span class="text-museumGold font-bold text-[10px] font-cinzel">${p.id}</span>
+                                <span class="font-serifKr text-xs font-semibold text-white">${p.nameKo}</span>
+                            </div>
+                            <span class="text-[9px] text-museumGray truncate w-full">${p.prompt}</span>
+                        </button>
+                    `;
+                });
+            });
+        }
+
+        // 키보드 방향키 조작 리스너 설치
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // 시스템 진입 시 초기 기동 바인딩
+        window.onload = function() {
+            initSlides();
+            renderSlide(currentSlideIndex);
+            setupSidebar();
+            setupSearch();
+
+            // 바닥 조작반 버튼 리스너 연계
+            document.getElementById('prev-btn').addEventListener('click', prevSlide);
+            document.getElementById('next-btn').addEventListener('click', nextSlide);
+            document.getElementById('autoplay-btn').addEventListener('click', toggleAutoplay);
+        };
+    </script>
+</body>
+</html>
