@@ -115,9 +115,8 @@
 
         /* PORTFOLIO */
         .portfolio { padding: var(--pad) 0; background: var(--bg2); }
-        .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
         .art { position: relative; overflow: hidden; aspect-ratio: 1/1; background: var(--panel); cursor: pointer; }
-        .art:nth-child(1), .art:nth-child(6) { grid-row: span 2; aspect-ratio: 1/2; }
         .art img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(.2,.7,.2,1); }
         .art:hover img { transform: scale(1.08); }
         .art::after {
@@ -190,8 +189,7 @@
         @media (max-width: 900px) {
             .about-grid { grid-template-columns: 1fr; gap: 40px; }
             .about-photo .frame { max-width: 400px; margin: 0 auto; }
-            .gallery { grid-template-columns: repeat(2, 1fr); }
-            .art:nth-child(1), .art:nth-child(6) { grid-row: span 1; aspect-ratio: 1/1; }
+            .gallery { grid-template-columns: repeat(3, 1fr); }
             .links-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 620px) {
@@ -199,7 +197,7 @@
             .nav-links.open { transform: none; }
             .nav-links a { font-size: 18px; }
             .nav-toggle { display: block; z-index: 101; }
-            .gallery { grid-template-columns: 1fr; }
+            .gallery { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .links-grid { grid-template-columns: 1fr; }
             .prompt-frame { height: 600px; }
         }
@@ -270,6 +268,12 @@
                 <div class="art"><img src="https://cdn.midjourney.com/1d93f626-1d85-465d-acb6-1cc02bbe5993/0_0.png" alt="AI Art 4" loading="lazy"></div>
                 <div class="art"><img src="https://cdn.midjourney.com/3d8ae306-d5bf-4d4d-8941-3c422250d036/0_0.png" alt="AI Art 5" loading="lazy"></div>
                 <div class="art"><img src="https://cdn.midjourney.com/927b8512-64d3-4d94-b696-42c1ef002750/0_1.png" alt="AI Art 6" loading="lazy"></div>
+                <div class="art"><img src="https://cdn.midjourney.com/8ce7da70-e87f-409c-8384-c3cfff33ea20/0_1.png" alt="AI Art 7" loading="lazy"></div>
+                <div class="art"><img src="https://cdn.midjourney.com/04308f04-a766-4ad0-bff0-5a3bd71647b7/0_0.png" alt="AI Art 8" loading="lazy"></div>
+                <div class="art"><img src="https://cdn.midjourney.com/ddccb4d4-25db-4386-95fb-59a3c0677a6d/0_1.png" alt="AI Art 9" loading="lazy"></div>
+                <div class="art"><img src="https://cdn.midjourney.com/c9c70998-c475-4b59-815a-5889676ff05f/0_0.png" alt="AI Art 10" loading="lazy"></div>
+                <div class="art"><img src="https://cdn.midjourney.com/f98d4519-983a-49ae-b05d-2b1a518bae2e/0_2.png" alt="AI Art 11" loading="lazy"></div>
+                <div class="art"><img src="https://cdn.midjourney.com/04a3cc71-401b-4b78-8090-e384a897554b/0_1.png" alt="AI Art 12" loading="lazy"></div>
             </div>
         </div>
     </section>
