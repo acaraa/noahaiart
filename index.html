@@ -191,11 +191,17 @@
         .btn-submit:hover { background: #ddc07d; letter-spacing: 3px; }
 
         /* COUPANG */
-        .coupang { padding: 0 0 clamp(46px, 7vw, 80px); background: var(--bg); }
+        /* 배너가 실제로 렌더링될 때만 여백과 고지문구를 보여준다.
+           쿠팡 위젯은 처음에 0x0 숨김 상태로 삽입되고 로드 후 스스로 커지는데,
+           안 뜨는 경우 빈 공간과 고지문구만 남아 오류처럼 보이기 때문. */
+        .coupang { padding: 0; background: var(--bg); }
+        .coupang.cp-ready { padding: 0 0 clamp(46px, 7vw, 80px); }
+        .cp-note { display: none; }
+        .coupang.cp-ready .cp-note { display: block; }
         .coupang .wrap { display: flex; flex-direction: column; align-items: center; }
         /* 배너는 680px 고정폭이라 좁은 화면에서는 박스 안에서 가로 스크롤시킨다.
            min-width:0이 없으면 플렉스 자식이 안 줄어들어 페이지 전체가 밀린다. */
-        .cp-box { width: 100%; min-width: 0; overflow-x: auto; min-height: 140px; text-align: center; -webkit-overflow-scrolling: touch; }
+        .cp-box { width: 100%; min-width: 0; overflow-x: auto; text-align: center; -webkit-overflow-scrolling: touch; }
         .cp-note { margin-top: 16px; font-size: 11px; color: #6f6a60; text-align: center; line-height: 1.7; letter-spacing: .2px; }
 
         /* FOOTER */
@@ -537,6 +543,22 @@
         addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
         addEventListener('resize', onScroll, { passive: true });
         onScroll();
+
+        /* 쿠팡 배너가 실제로 그려졌을 때만 해당 섹션을 노출 */
+        (function () {
+            const sec = document.querySelector('.coupang');
+            if (!sec) return;
+            let tries = 0;
+            const t = setInterval(() => {
+                const f = sec.querySelector('iframe');
+                if (f && f.getBoundingClientRect().height > 10) {
+                    sec.classList.add('cp-ready');
+                    clearInterval(t);
+                } else if (++tries > 24) {   /* 12초 대기 후 포기 */
+                    clearInterval(t);
+                }
+            }, 500);
+        })();
 
         const lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
         document.querySelectorAll('.art img').forEach(img => img.parentElement.addEventListener('click', () => { lbImg.src = img.src; lb.classList.add('open'); }));
