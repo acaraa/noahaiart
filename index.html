@@ -190,6 +190,14 @@
         }
         .btn-submit:hover { background: #ddc07d; letter-spacing: 3px; }
 
+        /* COUPANG */
+        .coupang { padding: 0 0 clamp(46px, 7vw, 80px); background: var(--bg); }
+        .coupang .wrap { display: flex; flex-direction: column; align-items: center; }
+        /* 배너는 680px 고정폭이라 좁은 화면에서는 박스 안에서 가로 스크롤시킨다.
+           min-width:0이 없으면 플렉스 자식이 안 줄어들어 페이지 전체가 밀린다. */
+        .cp-box { width: 100%; min-width: 0; overflow-x: auto; min-height: 140px; text-align: center; -webkit-overflow-scrolling: touch; }
+        .cp-note { margin-top: 16px; font-size: 11px; color: #6f6a60; text-align: center; line-height: 1.7; letter-spacing: .2px; }
+
         /* FOOTER */
         .footer { padding: 70px 0 44px; text-align: center; background: var(--bg2); border-top: 1px solid var(--line); }
         .footer .fl { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 700; }
@@ -454,6 +462,18 @@
                 </div>
                 <button type="submit" class="btn-submit">전송하기 · SEND</button>
             </form>
+        </div>
+    </section>
+
+    <section class="coupang">
+        <div class="wrap">
+            <div class="cp-box">
+                <script src="https://ads-partners.coupang.com/g.js"></script>
+                <script>
+                    new PartnersCoupang.G({"id":518417,"trackingCode":"AF7836287","subId":null,"template":"carousel","width":"680","height":"140"});
+                </script>
+            </div>
+            <p class="cp-note">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
         </div>
     </section>
 
