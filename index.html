@@ -84,6 +84,10 @@
         .hero-video {
             position: absolute; inset: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; pointer-events: none;
+            /* 세로 화면에서는 16:9 영상의 가운데 26%만 보인다. 피사체가 20초 동안
+               왼쪽에서 오른쪽으로 이동하므로, 고래 비행 구간이 살아나는 60%로 맞췄다.
+               (50%는 10~13초에 고래가 화면 밖으로 밀려난다) */
+            object-position: 60% center;
         }
         .hero-motes { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
         .hero-motes span { position: absolute; bottom: -12px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0; box-shadow: 0 0 8px rgba(201,169,97,.7); animation: mote linear infinite; }
