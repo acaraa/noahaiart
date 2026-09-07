@@ -74,7 +74,13 @@
 
         /* HERO */
         .hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
-        .hero-bg { position: absolute; inset: 0; overflow: hidden; }
+        /* z-index:0으로 스택 컨텍스트를 만들어 내부 레이어(슬라이드/영상/그라데이션)가
+           금빛 입자(z-index:1), 히어로 텍스트(z-index:2) 아래에 머물게 한다 */
+        .hero-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+        .hero-video {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 1; pointer-events: none;
+        }
         .hero-slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; filter: grayscale(.15) contrast(1.03); animation: heroKB 35s infinite; will-change: opacity, transform; }
         .hero-slide:nth-child(1) { animation-delay: 0s; }
         .hero-slide:nth-child(2) { animation-delay: 7s; }
@@ -86,10 +92,17 @@
         .hero-motes span { position: absolute; bottom: -12px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0; box-shadow: 0 0 8px rgba(201,169,97,.7); animation: mote linear infinite; }
         @keyframes mote { 0%{transform:translate(0,0) scale(1);opacity:0} 12%{opacity:.75} 85%{opacity:.4} 100%{transform:translate(26px,-104vh) scale(.55);opacity:0} }
         .hero-bg::after {
-            content: ""; position: absolute; inset: 0;
+            content: ""; position: absolute; inset: 0; z-index: 2;
             background:
                 radial-gradient(ellipse at 30% 40%, rgba(14,14,16,.55), rgba(14,14,16,.9) 75%),
                 linear-gradient(180deg, rgba(14,14,16,.75), rgba(14,14,16,.55) 40%, var(--bg) 99%);
+        }
+        /* 기존 오버레이는 밝은 이미지 슬라이드 기준이라 어두운 영상 위에서는 과하다.
+           영상이 실제로 재생될 때만 완화해 작품이 보이게 한다. */
+        .hero--video .hero-bg::after {
+            background:
+                radial-gradient(ellipse at 30% 40%, rgba(14,14,16,.28), rgba(14,14,16,.7) 75%),
+                linear-gradient(180deg, rgba(14,14,16,.5), rgba(14,14,16,.28) 40%, var(--bg) 99%);
         }
         .hero-in { position: relative; z-index: 2; width: 100%; }
         .hero-in > * { opacity: 0; animation: fadeUp .9s cubic-bezier(.2,.7,.2,1) forwards; }
@@ -277,11 +290,14 @@
             .gallery { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .links-grid { grid-template-columns: 1fr; }
             .prompt-frame { height: 600px; }
+            /* 모바일에서는 데이터 절약을 위해 영상 대신 기존 이미지 슬라이드를 쓴다 */
+            .hero-video { display: none; }
         }
         @media (prefers-reduced-motion: reduce) {
             .hero-slide { animation: none; opacity: 0; }
             .hero-slide:nth-child(1) { opacity: 1; }
             .hero-motes { display: none; }
+            .hero-video { display: none; }
             .hero-in > * { animation: none !important; opacity: 1 !important; transform: none !important; }
             .scroll-cue { animation: none; }
             .reveal, .reveal-l, .reveal-r, .stagger > * {
@@ -318,6 +334,10 @@
             <div class="hero-slide" style="background-image:url('https://cdn.midjourney.com/c9c70998-c475-4b59-815a-5889676ff05f/0_0.png')"></div>
             <div class="hero-slide" style="background-image:url('https://cdn.midjourney.com/3d8ae306-d5bf-4d4d-8941-3c422250d036/0_0.png')"></div>
             <div class="hero-slide" style="background-image:url('https://cdn.midjourney.com/f98d4519-983a-49ae-b05d-2b1a518bae2e/0_2.png')"></div>
+            <!-- src는 스크립트에서 조건부로 연결한다. display:none만으로는 다운로드가 막히지 않아
+                 모바일·모션최소화 환경에서 4MB를 그대로 받아가기 때문. -->
+            <video class="hero-video" autoplay muted loop playsinline preload="auto"
+                   poster="hero-poster.jpg" data-src="hero.mp4" aria-hidden="true"></video>
         </div>
         <div class="hero-motes" aria-hidden="true"><span style="left:8%;animation-duration:14s;animation-delay:0s"></span><span style="left:20%;animation-duration:19s;animation-delay:3s;width:3px;height:3px"></span><span style="left:33%;animation-duration:16s;animation-delay:6s"></span><span style="left:46%;animation-duration:21s;animation-delay:1s;width:3px;height:3px"></span><span style="left:58%;animation-duration:15s;animation-delay:8s"></span><span style="left:69%;animation-duration:18s;animation-delay:4s"></span><span style="left:80%;animation-duration:22s;animation-delay:2s;width:3px;height:3px"></span><span style="left:90%;animation-duration:17s;animation-delay:7s"></span><span style="left:14%;animation-duration:20s;animation-delay:10s;width:6px;height:6px"></span><span style="left:52%;animation-duration:24s;animation-delay:12s"></span><span style="left:74%;animation-duration:16s;animation-delay:9s;width:3px;height:3px"></span><span style="left:38%;animation-duration:19s;animation-delay:5s"></span></div>
         <div class="wrap hero-in">
@@ -543,6 +563,19 @@
         addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
         addEventListener('resize', onScroll, { passive: true });
         onScroll();
+
+        /* 히어로 영상이 실제로 재생되면 오버레이를 완화 */
+        const heroVideo = document.querySelector('.hero-video');
+        /* 넓은 화면에서 모션이 허용될 때만 영상을 내려받는다 (CSS 480/620 분기와 동일 기준) */
+        if (heroVideo && !noMotion && innerWidth > 620) {
+            heroVideo.src = heroVideo.dataset.src;
+        }
+        if (heroVideo) {
+            const markHeroVideo = () => document.querySelector('.hero').classList.add('hero--video');
+            heroVideo.addEventListener('playing', markHeroVideo, { once: true });
+            /* 캐시된 영상은 이 스크립트가 실행되기 전에 재생이 시작될 수 있다 */
+            if (!heroVideo.paused && heroVideo.readyState >= 3) markHeroVideo();
+        }
 
         /* 쿠팡 배너가 실제로 그려졌을 때만 해당 섹션을 노출 */
         (function () {
