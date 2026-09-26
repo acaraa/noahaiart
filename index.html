@@ -498,7 +498,16 @@
             <div class="cp-box">
                 <script src="https://ads-partners.coupang.com/g.js"></script>
                 <script>
-                    new PartnersCoupang.G({"id":518417,"trackingCode":"AF7836287","subId":null,"template":"carousel","width":"680","height":"140"});
+                    /* 680 고정은 폰에서 가로로 밀어야 해서 과하게 커 보인다.
+                       화면 폭에 맞추되 480을 넘지 않게 한다. 이 스크립트는 파싱 중 실행되므로
+                       innerWidth를 못 읽는 환경이 있을 수 있어 480으로 안전하게 되돌린다. */
+                    /* 44 = .wrap 좌우 여백, 18 = 스크롤바 몫(innerWidth가 이를 포함해 과대 계산됨) */
+                    var cpW = 480;
+                    try {
+                        var vw = window.innerWidth || 0;
+                        if (vw > 0) cpW = Math.max(280, Math.min(480, vw - 62));
+                    } catch (e) {}
+                    new PartnersCoupang.G({"id":518417,"trackingCode":"AF7836287","subId":null,"template":"carousel","width":String(cpW),"height":"140"});
                 </script>
             </div>
             <p class="cp-note">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
